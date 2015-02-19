@@ -1,8 +1,11 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Ebin {
 
@@ -40,21 +43,21 @@ public class Ebin {
 		}
 	}
 
-	private static String[] getSoxCommandArray() {
+	private static String[] getSoxCommandArray(String filepath) {
 		String[] comAr = new String[4];
 		comAr[0] = "sox";
-		comAr[1] = "C:\\ws\\320015_0001.mp3";
+		comAr[1] = filepath;
 		comAr[2] = "-n";
 		comAr[3] = "stats";
 		return comAr;
 	}
 
-	private static String[] getFFMPEGCommandArray() {
+	private static String[] getFFMPEGCommandArray(String filepath) {
 		String[] comAr = new String[9];
 		comAr[0] = "ffmpeg";
 		comAr[1] = "-nostats";
 		comAr[2] = "-i";
-		comAr[3] = "C:\\ws\\320015_0001.mp3";
+		comAr[3] = filepath;
 		comAr[4] = "-filter_complex";
 		comAr[5] = "ebur128";
 		comAr[6] = "-f";
@@ -63,22 +66,33 @@ public class Ebin {
 		return comAr;
 	}
 
-	private static void analyzeWithSox() throws IOException {
-		String[] soxCommandArray = getSoxCommandArray();
+	private static void analyzeWithSox(String filepath) throws IOException {
+		String[] soxCommandArray = getSoxCommandArray(filepath);
 		executeExternalCommand(soxCommandArray);
 	}
 
-	private static void analyzeWithFFMPEG() throws IOException {
-		String[] ffmpegCommandArray = getFFMPEGCommandArray();
+	private static void analyzeWithFFMPEG(String filepath) throws IOException {
+		String[] ffmpegCommandArray = getFFMPEGCommandArray(filepath);
 		executeExternalCommand(ffmpegCommandArray);
+	}
+	
+	
+	private static void analyzeFile(String path) throws IOException {
+		analyzeWithSox(path);
+		analyzeWithFFMPEG(path);
 	}
 
 	public static void main(String[] args) {
-		try {
-			analyzeWithSox();
-			analyzeWithFFMPEG();
-		} catch (IOException e) {
-			e.printStackTrace();
+
+		File directory = new File(args[0]);
+		File[] files = directory.listFiles();
+		
+		for (File file : files){
+			try {
+				analyzeFile(file.getAbsolutePath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
