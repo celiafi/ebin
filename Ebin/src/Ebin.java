@@ -73,36 +73,47 @@ public class Ebin {
 
 	private static String analyzeWithSox(String filepath) throws IOException {
 		String[] soxCommandArray = getSoxCommandArray(filepath);
+		StringBuilder sb = new StringBuilder();
 		
 		String soxOutput = executeExternalCommand(soxCommandArray);
 		SoxStats stats = SoxStats.parseStats(soxOutput);
 		
-		System.out.println("FILE: ");
-		System.out.println(filepath);
-		System.out.println("PEAK LEVEL: ");
-		System.out.println(stats.peakLevel);
-		System.out.println("SNR: ");
-		System.out.println(stats.snr);
+		sb.append("\r\n\r\nFILE: ");
+		sb.append(filepath);
+		sb.append("\r\nPEAK LEVEL: ");
+		sb.append(stats.peakLevel);
+		sb.append("\r\nSNR: ");
+		sb.append(stats.snr);
 		
-		return soxOutput;
+		return sb.toString();
 	}
 
 	private static String analyzeWithFFMPEG(String filepath) throws IOException {
 		String[] ffmpegCommandArray = getFFMPEGCommandArray(filepath);
+		StringBuilder sb = new StringBuilder();
 		
 		String ffmpegOutput = executeExternalCommand(ffmpegCommandArray);
 		FfmpegStats stats = FfmpegStats.parseStats(ffmpegOutput);
 		
-		System.out.println("LUFS: ");
-		System.out.println(stats.lufs);
+		sb.append("\r\nLUFS: ");
+		sb.append(stats.lufs);
 		
-		return ffmpegOutput;
+		return sb.toString();
 	}
 
 	private static void analyzeFile(String path) throws IOException {
-		analyzeWithSox(path);
-		analyzeWithFFMPEG(path);
+		File report = new File("C:\\report.txt");
+		
+		String soxResult = analyzeWithSox(path);
+		String ffmpegResult = analyzeWithFFMPEG(path);
 		System.out.println("");
+		
+		ReportWriter.writeStringToFile(soxResult, report);
+		ReportWriter.writeStringToFile("\n", report);
+		ReportWriter.writeStringToFile(ffmpegResult, report);
+		ReportWriter.writeStringToFile("\n", report);
+
+		ReportWriter.writeStringToFile("\n", report);
 	}
 
 	public static void main(String[] args) {
