@@ -9,8 +9,9 @@ import java.nio.file.Paths;
 
 public class Ebin {
 
-	private static boolean executeExternalCommand(String[] commandArray)
+	private static String executeExternalCommand(String[] commandArray)
 			throws IOException {
+		String result = "";
 		Process process;
 
 		process = new ProcessBuilder(commandArray).start();
@@ -24,23 +25,23 @@ public class Ebin {
 		BufferedReader bReader = new BufferedReader(reader);
 
 		String nextLine = null;
-		System.out.println("Error stream:");
+		result = result.concat("Error stream:\n");
 		while ((nextLine = eReader.readLine()) != null) {
-			System.out.println(nextLine);
+			result = result.concat(nextLine);
+			result = result.concat("\n");
 		}
 
-		System.out.println("Output stream:");
+		result = result.concat("Output stream:\n");
 		while ((nextLine = bReader.readLine()) != null) {
-			System.out.println(nextLine);
+			result = result.concat(nextLine);
+			result = result.concat("\n");
 		}
 
 		int exitValue = process.exitValue();
-		System.out.println("Process exited with value: " + exitValue);
-		if (exitValue == 0) {
-			return true;
-		} else {
-			return false;
-		}
+		result = result.concat("Process exited with value: " + exitValue);
+		result = result.concat("\n");
+
+		return result;
 	}
 
 	private static String[] getSoxCommandArray(String filepath) {
@@ -66,28 +67,27 @@ public class Ebin {
 		return comAr;
 	}
 
-	private static void analyzeWithSox(String filepath) throws IOException {
+	private static String analyzeWithSox(String filepath) throws IOException {
 		String[] soxCommandArray = getSoxCommandArray(filepath);
-		executeExternalCommand(soxCommandArray);
+		return executeExternalCommand(soxCommandArray);
 	}
 
-	private static void analyzeWithFFMPEG(String filepath) throws IOException {
+	private static String analyzeWithFFMPEG(String filepath) throws IOException {
 		String[] ffmpegCommandArray = getFFMPEGCommandArray(filepath);
-		executeExternalCommand(ffmpegCommandArray);
+		return executeExternalCommand(ffmpegCommandArray);
 	}
-	
-	
+
 	private static void analyzeFile(String path) throws IOException {
-		analyzeWithSox(path);
-		analyzeWithFFMPEG(path);
+		System.out.print(analyzeWithSox(path));
+		System.out.print(analyzeWithFFMPEG(path));
 	}
 
 	public static void main(String[] args) {
 
 		File directory = new File(args[0]);
 		File[] files = directory.listFiles();
-		
-		for (File file : files){
+
+		for (File file : files) {
 			try {
 				analyzeFile(file.getAbsolutePath());
 			} catch (IOException e) {
