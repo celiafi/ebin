@@ -11,7 +11,8 @@ public class Ebin {
 
 	private static String executeExternalCommand(String[] commandArray)
 			throws IOException {
-		String result = "";
+		StringBuilder sb = new StringBuilder();
+		
 		Process process;
 
 		process = new ProcessBuilder(commandArray).start();
@@ -25,23 +26,23 @@ public class Ebin {
 		BufferedReader bReader = new BufferedReader(reader);
 
 		String nextLine = null;
-		result = result.concat("Error stream:\n");
+		sb.append("Error stream:\n");
 		while ((nextLine = eReader.readLine()) != null) {
-			result = result.concat(nextLine);
-			result = result.concat("\n");
+			sb.append(nextLine);
+			sb.append("\n");
 		}
 
-		result = result.concat("Output stream:\n");
+		sb.append("Output stream:\n");
 		while ((nextLine = bReader.readLine()) != null) {
-			result = result.concat(nextLine);
-			result = result.concat("\n");
+			sb.append(nextLine);
+			sb.append("\n");
 		}
 
 		int exitValue = process.exitValue();
-		result = result.concat("Process exited with value: " + exitValue);
-		result = result.concat("\n");
+		sb.append("Process exited with value: " + exitValue);
+		sb.append("\n");
 
-		return result;
+		return sb.toString();
 	}
 
 	private static String[] getSoxCommandArray(String filepath) {
