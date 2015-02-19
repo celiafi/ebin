@@ -12,7 +12,7 @@ public class Ebin {
 	private static String executeExternalCommand(String[] commandArray)
 			throws IOException {
 		StringBuilder sb = new StringBuilder();
-		
+
 		Process process;
 
 		process = new ProcessBuilder(commandArray).start();
@@ -25,23 +25,28 @@ public class Ebin {
 		Reader reader = new InputStreamReader(stream);
 		BufferedReader bReader = new BufferedReader(reader);
 
-		String nextLine = null;
 		sb.append("Error stream:\n");
-		while ((nextLine = eReader.readLine()) != null) {
-			sb.append(nextLine);
-			sb.append("\n");
-		}
+		String eStream = readReader(eReader);
+		sb.append(eStream);
 
 		sb.append("Output stream:\n");
-		while ((nextLine = bReader.readLine()) != null) {
-			sb.append(nextLine);
-			sb.append("\n");
-		}
+		String oStream = readReader(bReader);
+		sb.append(oStream);
 
 		int exitValue = process.exitValue();
 		sb.append("Process exited with value: " + exitValue);
 		sb.append("\n");
 
+		return sb.toString();
+	}
+
+	private static String readReader(BufferedReader bReader) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		String nextLine = null;
+		while ((nextLine = bReader.readLine()) != null) {
+			sb.append(nextLine);
+			sb.append("\n");
+		}
 		return sb.toString();
 	}
 
