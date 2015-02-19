@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Ebin {
 
@@ -75,7 +73,15 @@ public class Ebin {
 
 	private static String analyzeWithSox(String filepath) throws IOException {
 		String[] soxCommandArray = getSoxCommandArray(filepath);
-		return executeExternalCommand(soxCommandArray);
+		String soxOutput = executeExternalCommand(soxCommandArray);
+		SoxStats stats = SoxStats.parseStats(soxOutput);
+		System.out.println("FILE: ");
+		System.out.println(filepath);
+		System.out.println("PEAK LEVEL: ");
+		System.out.println(stats.peakLevel);
+		System.out.println("SNR: ");
+		System.out.println(stats.snr);
+		return soxOutput;
 	}
 
 	private static String analyzeWithFFMPEG(String filepath) throws IOException {
@@ -84,8 +90,8 @@ public class Ebin {
 	}
 
 	private static void analyzeFile(String path) throws IOException {
-		System.out.print(analyzeWithSox(path));
-		System.out.print(analyzeWithFFMPEG(path));
+		analyzeWithSox(path);
+//		System.out.print(analyzeWithFFMPEG(path));
 	}
 
 	public static void main(String[] args) {
@@ -100,6 +106,7 @@ public class Ebin {
 				e.printStackTrace();
 			}
 		}
+		
 	}
 
 }
