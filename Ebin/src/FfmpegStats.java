@@ -2,6 +2,8 @@ import java.util.Scanner;
 
 public class FfmpegStats {
 	float lufs;
+	
+	private final static String LUFS_ID = "    I:";
 
 	FfmpegStats(float lufs) {
 		this.lufs = lufs;
@@ -14,8 +16,8 @@ public class FfmpegStats {
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine();
 
-			if (line.startsWith("    I:")) {
-				int prefixTrimLength = "    I:         ".length();
+			if (line.startsWith(LUFS_ID)) {
+				int prefixTrimLength = LUFS_ID.length();
 				int suffixTrimLength = " LUFS".length();
 				
 				String stripped = line.substring(prefixTrimLength, line.length() - suffixTrimLength);

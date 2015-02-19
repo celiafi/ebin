@@ -6,6 +6,13 @@ public class SoxStats {
 	float snr;
 	float rmsPk;
 	float rmsTr;
+	
+	/**
+	 * SoX output parsing constants
+	 */
+	private final static String PEAK_LEVEL_ID = "Pk lev dB";
+	private final static String RMS_PEAK_ID = "RMS Pk dB";
+	private final static String RMS_TROUGH_ID = "RMS Tr dB";
 
 	SoxStats(float peakLevel, float rmsPk, float rmsTr) {
 		this.peakLevel = peakLevel;
@@ -24,22 +31,22 @@ public class SoxStats {
 		while(scanner.hasNextLine()){
 			String line = scanner.nextLine();
 			
-			if(line.startsWith("Pk lev dB")){
-				int  trimLength = "Pk lev dB".length();
+			if(line.startsWith(PEAK_LEVEL_ID)){
+				int  trimLength = PEAK_LEVEL_ID.length();
 				String stripped = line.substring(trimLength);
 				String trimmed = stripped.trim();
 				peakLevel = Float.parseFloat(trimmed);
 			}
 			
-			if(line.startsWith("RMS Pk dB")){
-				int trimLength = "RMS Pk dB".length();
+			if(line.startsWith(RMS_PEAK_ID)){
+				int trimLength = RMS_PEAK_ID.length();
 				String stripped = line.substring(trimLength);
 				String trimmed = stripped.trim();
 				rmsPk = Float.parseFloat(trimmed);
 			}
 			
-			if(line.startsWith("RMS Tr dB")){
-				int trimLength = "RMS Tr dB".length();
+			if(line.startsWith(RMS_TROUGH_ID)){
+				int trimLength = RMS_TROUGH_ID.length();
 				String stripped = line.substring(trimLength);
 				String trimmed = stripped.trim();
 				rmsTr = Float.parseFloat(trimmed);
