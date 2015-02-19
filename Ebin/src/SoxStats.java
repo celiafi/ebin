@@ -16,9 +16,9 @@ public class SoxStats {
 	}
 	
 	static SoxStats parseStats(String stats) {
-		float peakLevel = 0;
-		float rmsPk = 0;
-		float rmsTr = 0;
+		float peakLevel = Float.NaN;
+		float rmsPk = Float.NaN;
+		float rmsTr = Float.NaN;
 		
 		Scanner scanner = new Scanner(stats);
 		while(scanner.hasNextLine()){

@@ -8,7 +8,7 @@ public class FfmpegStats {
 	}
 
 	static FfmpegStats parseStats(String stats) {
-		float lufs = 0.0f;
+		float lufs = Float.NaN;
 
 		Scanner scanner = new Scanner(stats);
 		while (scanner.hasNextLine()) {
