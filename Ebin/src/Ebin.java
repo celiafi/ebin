@@ -73,25 +73,36 @@ public class Ebin {
 
 	private static String analyzeWithSox(String filepath) throws IOException {
 		String[] soxCommandArray = getSoxCommandArray(filepath);
+		
 		String soxOutput = executeExternalCommand(soxCommandArray);
 		SoxStats stats = SoxStats.parseStats(soxOutput);
+		
 		System.out.println("FILE: ");
 		System.out.println(filepath);
 		System.out.println("PEAK LEVEL: ");
 		System.out.println(stats.peakLevel);
 		System.out.println("SNR: ");
 		System.out.println(stats.snr);
+		
 		return soxOutput;
 	}
 
 	private static String analyzeWithFFMPEG(String filepath) throws IOException {
 		String[] ffmpegCommandArray = getFFMPEGCommandArray(filepath);
-		return executeExternalCommand(ffmpegCommandArray);
+		
+		String ffmpegOutput = executeExternalCommand(ffmpegCommandArray);
+		FfmpegStats stats = FfmpegStats.parseStats(ffmpegOutput);
+		
+		System.out.println("LUFS: ");
+		System.out.println(stats.lufs);
+		
+		return ffmpegOutput;
 	}
 
 	private static void analyzeFile(String path) throws IOException {
 		analyzeWithSox(path);
-//		System.out.print(analyzeWithFFMPEG(path));
+		analyzeWithFFMPEG(path);
+		System.out.println("");
 	}
 
 	public static void main(String[] args) {
