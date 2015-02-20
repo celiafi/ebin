@@ -9,6 +9,12 @@ import java.util.Calendar;
 
 public class Ebin {
 
+	private static final float PEAK_MIN = -2.0f;
+	private static final float PEAK_MAX = 0.0f;
+	private static final float SNR_MIN = 40.0f;
+	private static final float LUFS_MIN = -25.0f;
+	private static final float LUFS_MAX = -13.0f;
+
 	private static String executeExternalCommand(String[] commandArray)
 			throws IOException {
 		StringBuilder sb = new StringBuilder();
@@ -77,41 +83,32 @@ public class Ebin {
 		return comAr;
 	}
 
-	private static String analyzeWithSox(String filepath) throws IOException {
+	private static SoxStats analyzeWithSox(String filepath) throws IOException {
 		String[] soxCommandArray = getSoxCommandArray(filepath);
-		StringBuilder sb = new StringBuilder();
 
 		String soxOutput = executeExternalCommand(soxCommandArray);
 		SoxStats stats = SoxStats.parseStats(soxOutput);
 
-		sb.append("FILE: ");
-		sb.append(filepath);
-		sb.append("\r\nPEAK LEVEL: ");
-		sb.append(stats.peakLevel);
-		sb.append("\r\nSNR: ");
-		sb.append(stats.snr);
-
-		return sb.toString();
+		return stats;
 	}
 
-	private static String analyzeWithFFMPEG(String filepath) throws IOException {
+	private static FfmpegStats analyzeWithFFMPEG(String filepath)
+			throws IOException {
 		String[] ffmpegCommandArray = getFFMPEGCommandArray(filepath);
-		StringBuilder sb = new StringBuilder();
 
 		String ffmpegOutput = executeExternalCommand(ffmpegCommandArray);
 		FfmpegStats stats = FfmpegStats.parseStats(ffmpegOutput);
 
-		sb.append("\r\nLUFS: ");
-		sb.append(stats.lufs);
-
-		return sb.toString();
+		return stats;
 	}
 
-	private static String analyzeFile(String path) throws IOException {
-		String soxResult = analyzeWithSox(path);
-		String ffmpegResult = analyzeWithFFMPEG(path);
+	private static Stats analyzeFile(String path) throws IOException {
+		SoxStats soxStats = analyzeWithSox(path);
+		FfmpegStats ffmpegStats = analyzeWithFFMPEG(path);
 
-		return soxResult + ffmpegResult;
+		Stats stats = new Stats(path, soxStats, ffmpegStats);
+
+		return stats;
 	}
 
 	private static String getExtensionFromFile(File file) {
@@ -130,6 +127,11 @@ public class Ebin {
 
 	public static void main(String[] args) {
 
+		if (args.length != 2) {
+			showUsage();
+			return;
+		}
+
 		File directory = new File(args[0]);
 		File report = new File(args[1]);
 		File[] files = directory.listFiles();
@@ -140,17 +142,21 @@ public class Ebin {
 
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
 				.format(Calendar.getInstance().getTime());
-		sb.append(timeStamp);
+		sb.append("Analyzed at " + timeStamp);
 		sb.append("\r\n");
 		sb.append("\r\n");
 
 		for (File file : files) {
 			if (matchExtension(file, ".mp3")) {
 				try {
-					String analysis = analyzeFile(file.getAbsolutePath());
-					System.out.println(analysis);
+					Stats stats = analyzeFile(file.getAbsolutePath());
+
+					String analysis = parseStats(stats);
+
 					sb.append(analysis);
 					sb.append("\r\n\r\n");
+
+					System.out.println(analysis);
 					System.out.println("\r\n");
 
 				} catch (IOException e) {
@@ -166,6 +172,29 @@ public class Ebin {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static String parseStats(Stats stats) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("file:\t");
+		sb.append(stats.getPath());
+		sb.append("\r\npk dB:\t");
+		sb.append(stats.getPeak());
+		sb.append("\r\nsnr dB:\t");
+		sb.append(stats.getSnr());
+		sb.append("\r\nlufs:\t");
+		sb.append(stats.getLufs());
+
+		return sb.toString();
+	}
+
+	private static void showUsage() {
+		System.out.println("Usage information:");
+		System.out.println("java -jar ebin.jar dir report");
+		System.out.println("where \"dir\" is the directory to be analyzed");
+		System.out
+				.println("and \"report\" is where you want the report to be saved");
 	}
 
 }
