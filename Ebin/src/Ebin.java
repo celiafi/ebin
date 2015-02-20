@@ -74,61 +74,66 @@ public class Ebin {
 	private static String analyzeWithSox(String filepath) throws IOException {
 		String[] soxCommandArray = getSoxCommandArray(filepath);
 		StringBuilder sb = new StringBuilder();
-		
+
 		String soxOutput = executeExternalCommand(soxCommandArray);
 		SoxStats stats = SoxStats.parseStats(soxOutput);
-		
+
 		sb.append("\r\n\r\nFILE: ");
 		sb.append(filepath);
 		sb.append("\r\nPEAK LEVEL: ");
 		sb.append(stats.peakLevel);
 		sb.append("\r\nSNR: ");
 		sb.append(stats.snr);
-		
+
 		return sb.toString();
 	}
 
 	private static String analyzeWithFFMPEG(String filepath) throws IOException {
 		String[] ffmpegCommandArray = getFFMPEGCommandArray(filepath);
 		StringBuilder sb = new StringBuilder();
-		
+
 		String ffmpegOutput = executeExternalCommand(ffmpegCommandArray);
 		FfmpegStats stats = FfmpegStats.parseStats(ffmpegOutput);
-		
+
 		sb.append("\r\nLUFS: ");
 		sb.append(stats.lufs);
-		
+
 		return sb.toString();
 	}
 
-	private static void analyzeFile(String path) throws IOException {
+	private static String analyzeFile(String path) throws IOException {
 		File report = new File("C:\\report.txt");
-		
+
 		String soxResult = analyzeWithSox(path);
 		String ffmpegResult = analyzeWithFFMPEG(path);
-		System.out.println("");
-		
-		ReportWriter.writeStringToFile(soxResult, report);
-		ReportWriter.writeStringToFile("\n", report);
-		ReportWriter.writeStringToFile(ffmpegResult, report);
-		ReportWriter.writeStringToFile("\n", report);
 
-		ReportWriter.writeStringToFile("\n", report);
+		return soxResult + "\r\n" + ffmpegResult + "\r\n\r\n";
 	}
 
 	public static void main(String[] args) {
 
 		File directory = new File(args[0]);
+		File report = new File(args[1]);
 		File[] files = directory.listFiles();
+
+		StringBuilder sb = new StringBuilder();
 
 		for (File file : files) {
 			try {
-				analyzeFile(file.getAbsolutePath());
+				String analysis = analyzeFile(file.getAbsolutePath());
+				System.out.println(analysis);
+				sb.append(analysis);
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		
+		try {
+			ReportWriter.writeStringToFile(sb.toString(), report);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
