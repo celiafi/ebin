@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class Ebin {
 
@@ -50,7 +52,9 @@ public class Ebin {
 
 	private static String[] getSoxCommandArray(String filepath) {
 		String[] comAr = new String[4];
-		comAr[0] = "sox";
+		String workingDir = System.getProperty("user.dir");
+
+		comAr[0] = workingDir + "\\sox";
 		comAr[1] = filepath;
 		comAr[2] = "-n";
 		comAr[3] = "stats";
@@ -59,7 +63,9 @@ public class Ebin {
 
 	private static String[] getFFMPEGCommandArray(String filepath) {
 		String[] comAr = new String[9];
-		comAr[0] = "ffmpeg";
+		String workingDir = System.getProperty("user.dir");
+
+		comAr[0] = workingDir + "\\ffmpeg.exe";
 		comAr[1] = "-nostats";
 		comAr[2] = "-i";
 		comAr[3] = filepath;
@@ -78,7 +84,7 @@ public class Ebin {
 		String soxOutput = executeExternalCommand(soxCommandArray);
 		SoxStats stats = SoxStats.parseStats(soxOutput);
 
-		sb.append("\r\n\r\nFILE: ");
+		sb.append("FILE: ");
 		sb.append(filepath);
 		sb.append("\r\nPEAK LEVEL: ");
 		sb.append(stats.peakLevel);
@@ -102,12 +108,24 @@ public class Ebin {
 	}
 
 	private static String analyzeFile(String path) throws IOException {
-		File report = new File("C:\\report.txt");
-
 		String soxResult = analyzeWithSox(path);
 		String ffmpegResult = analyzeWithFFMPEG(path);
 
-		return soxResult + "\r\n" + ffmpegResult + "\r\n\r\n";
+		return soxResult + ffmpegResult;
+	}
+
+	private static String getExtensionFromFile(File file) {
+		String name = file.getName();
+		int lastIndexOf = name.lastIndexOf(".");
+		if (lastIndexOf == -1) {
+			return "";
+		}
+		return name.substring(lastIndexOf);
+	}
+
+	private static boolean matchExtension(File file, String extension) {
+		String fileExtension = getExtensionFromFile(file);
+		return fileExtension.equals(extension);
 	}
 
 	public static void main(String[] args) {
@@ -117,18 +135,32 @@ public class Ebin {
 		File[] files = directory.listFiles();
 
 		StringBuilder sb = new StringBuilder();
+		sb.append("Audio analysis report for directory " + directory);
+		sb.append("\r\n");
+
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
+				.format(Calendar.getInstance().getTime());
+		sb.append(timeStamp);
+		sb.append("\r\n");
+		sb.append("\r\n");
 
 		for (File file : files) {
-			try {
-				String analysis = analyzeFile(file.getAbsolutePath());
-				System.out.println(analysis);
-				sb.append(analysis);
+			if (matchExtension(file, ".mp3")) {
+				try {
+					String analysis = analyzeFile(file.getAbsolutePath());
+					System.out.println(analysis);
+					sb.append(analysis);
+					sb.append("\r\n\r\n");
+					System.out.println("\r\n");
 
-			} catch (IOException e) {
-				e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		
+		sb.append("End of report.");
+		System.out.println("Done.");
+
 		try {
 			ReportWriter.writeStringToFile(sb.toString(), report);
 		} catch (IOException e) {
