@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class Ebin {
@@ -14,6 +15,8 @@ public class Ebin {
 	private static final float SNR_MIN = 40.0f;
 	private static final float LUFS_MIN = -25.0f;
 	private static final float LUFS_MAX = -13.0f;
+
+	private static ArrayList<Stats> invalidStats = new ArrayList<Stats>();
 
 	private static String executeExternalCommand(String[] commandArray)
 			throws IOException {
@@ -157,13 +160,22 @@ public class Ebin {
 					sb.append("\r\n\r\n");
 
 					System.out.println(analysis);
-					System.out.println("\r\n");
+
+					if (!checkStatsForValidity(stats)) {
+						System.out.println("INVALID\r\n");
+						invalidStats.add(stats);
+					} else
+						System.out.println("VALID\r\n");
 
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		}
+
+		String invalid = appendInvalidStats();
+		sb.append(invalid);
+
 		sb.append("End of report.");
 		System.out.println("Done.");
 
@@ -172,6 +184,33 @@ public class Ebin {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static String appendInvalidStats() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("\r\nINVALID FILES:\r\n\r\n");
+
+		for (Stats stats : invalidStats) {
+			sb.append(parseStats(stats));
+			sb.append("\r\n\r\n");
+		}
+
+		return sb.toString();
+	}
+
+	private static boolean checkStatsForValidity(Stats stats) {
+		float peak = stats.getPeak();
+		float snr = stats.getSnr();
+		float lufs = stats.getLufs();
+
+		if (!(peak <= PEAK_MAX && peak >= PEAK_MIN))
+			return false;
+		if (snr < SNR_MIN)
+			return false;
+		if (!(lufs <= LUFS_MAX && lufs >= LUFS_MIN))
+			return false;
+
+		return true;
 	}
 
 	private static String parseStats(Stats stats) {
