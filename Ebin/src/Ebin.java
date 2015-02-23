@@ -17,6 +17,8 @@ public class Ebin {
 	private static final float LUFS_MAX = -13.0f;
 
 	private static ArrayList<Stats> invalidStats = new ArrayList<Stats>();
+	
+	public static final String NEWLINE = System.lineSeparator();
 
 	private static String executeExternalCommand(String[] commandArray)
 			throws IOException {
@@ -44,7 +46,7 @@ public class Ebin {
 
 		int exitValue = process.exitValue();
 		sb.append("Process exited with value: " + exitValue);
-		sb.append("\n");
+		sb.append(NEWLINE);
 
 		return sb.toString();
 	}
@@ -54,7 +56,7 @@ public class Ebin {
 		String nextLine = null;
 		while ((nextLine = bReader.readLine()) != null) {
 			sb.append(nextLine);
-			sb.append("\n");
+			sb.append(NEWLINE);
 		}
 		return sb.toString();
 	}
@@ -141,13 +143,13 @@ public class Ebin {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("Audio analysis report for directory " + directory);
-		sb.append("\r\n");
+		sb.append(NEWLINE);
 
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
 				.format(Calendar.getInstance().getTime());
 		sb.append("Analyzed at " + timeStamp);
-		sb.append("\r\n");
-		sb.append("\r\n");
+		sb.append(NEWLINE);
+		sb.append(NEWLINE);
 
 		for (File file : files) {
 			if (matchExtension(file, ".mp3")) {
@@ -157,15 +159,16 @@ public class Ebin {
 					String analysis = parseStats(stats);
 
 					sb.append(analysis);
-					sb.append("\r\n\r\n");
-
+					sb.append(NEWLINE);
+					sb.append(NEWLINE);
+					
 					System.out.println(analysis);
 
 					if (!checkStatsForValidity(stats)) {
-						System.out.println("INVALID\r\n");
+						System.out.println("INVALID" + NEWLINE);
 						invalidStats.add(stats);
 					} else
-						System.out.println("VALID\r\n");
+						System.out.println("VALID" + NEWLINE);
 
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -188,11 +191,12 @@ public class Ebin {
 
 	private static String appendInvalidStats() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("\r\nINVALID FILES:\r\n\r\n");
+		sb.append(NEWLINE + "INVALID FILES:" + NEWLINE + NEWLINE);
 
 		for (Stats stats : invalidStats) {
 			sb.append(parseStats(stats));
-			sb.append("\r\n\r\n");
+			sb.append(NEWLINE);
+			sb.append(NEWLINE);
 		}
 
 		return sb.toString();
@@ -218,11 +222,11 @@ public class Ebin {
 		StringBuilder sb = new StringBuilder();
 		sb.append("file:\t");
 		sb.append(stats.getPath());
-		sb.append("\r\npk dB:\t");
+		sb.append(NEWLINE + "pk dB:\t");
 		sb.append(stats.getPeak());
-		sb.append("\r\nsnr dB:\t");
+		sb.append(NEWLINE + "snr dB:\t");
 		sb.append(stats.getSnr());
-		sb.append("\r\nlufs:\t");
+		sb.append(NEWLINE + "lufs:\t");
 		sb.append(stats.getLufs());
 
 		return sb.toString();
