@@ -152,7 +152,7 @@ public class Ebin {
 		sb.append(NEWLINE);
 
 		for (File file : files) {
-			if (matchExtension(file, ".mp3")) {
+			if (matchExtension(file, ".mp3") || matchExtension(file, ".wav")) {
 				try {
 					Stats stats = analyzeFile(file.getAbsolutePath());
 
