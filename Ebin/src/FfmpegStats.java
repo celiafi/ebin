@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 public class FfmpegStats {
 	float lufs;
-	
+
 	private final static String LUFS_ID = "    I:";
 
 	FfmpegStats(float lufs) {
@@ -19,11 +19,13 @@ public class FfmpegStats {
 			if (line.startsWith(LUFS_ID)) {
 				int prefixTrimLength = LUFS_ID.length();
 				int suffixTrimLength = " LUFS".length();
-				
-				String stripped = line.substring(prefixTrimLength, line.length() - suffixTrimLength);
-				
+
+				String stripped = line.substring(prefixTrimLength,
+						line.length() - suffixTrimLength);
+
 				String trimmed = stripped.trim();
-				lufs = Float.parseFloat(trimmed);
+				if (!trimmed.isEmpty())
+					lufs = Float.parseFloat(trimmed);
 			}
 		}
 		scanner.close();
