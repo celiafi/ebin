@@ -3,10 +3,10 @@ import java.util.StringTokenizer;
 
 public class SoxStats {
 
-	float peakLevel;
-	float snr;
-	float rmsPk;
-	float rmsTr;
+	private float peakLevel;
+	private float snr;
+	private float rmsPk;
+	private float rmsTr;
 
 	/**
 	 * SoX output parsing constants
@@ -21,6 +21,22 @@ public class SoxStats {
 		this.rmsTr = rmsTr;
 
 		this.snr = rmsPk - rmsTr;
+	}
+
+	float getPeakLevel() {
+		return this.peakLevel;
+	}
+
+	float getSnr() {
+		return this.snr;
+	}
+
+	float getRmsPeak() {
+		return this.rmsPk;
+	}
+
+	float getRmsTrough() {
+		return this.rmsTr;
 	}
 
 	static SoxStats parseStats(String stats) {

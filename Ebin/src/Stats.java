@@ -10,11 +10,11 @@ public class Stats {
 	}
 
 	public float getPeak() {
-		return this.soxStats.peakLevel;
+		return this.soxStats.getPeakLevel();
 	}
 
 	public float getSnr() {
-		return this.soxStats.snr;
+		return this.soxStats.getSnr();
 	}
 
 	public float getLufs() {
