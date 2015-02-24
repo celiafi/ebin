@@ -145,7 +145,7 @@ public class Ebin {
 
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
 				.format(Calendar.getInstance().getTime());
-		sb.append("Analyzed at " + timeStamp);
+		sb.append("Analysis started at " + timeStamp);
 		sb.append(Constants.NEWLINE);
 		sb.append(Constants.NEWLINE);
 
@@ -163,16 +163,18 @@ public class Ebin {
 					System.out.println(analysis);
 
 					if (!checkStatsForValidity(stats)) {
-						System.out.println("INVALID" + Constants.NEWLINE);
 						invalidStats.add(stats);
-					} else
-						System.out.println("VALID" + Constants.NEWLINE);
+					}
 
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		}
+
+		timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar
+				.getInstance().getTime());
+		sb.append("Analysis finished at " + timeStamp);
 
 		String invalid = appendInvalidStats();
 		sb.append(invalid);
