@@ -2,15 +2,19 @@ import java.util.Scanner;
 
 public class FfmpegStats {
 	float lufs;
+	float lra;
 
 	private final static String LUFS_ID = "    I:";
+	private final static String LRA_ID =  "    LRA:";
 
-	FfmpegStats(float lufs) {
+	FfmpegStats(float lufs, float lra) {
 		this.lufs = lufs;
+		this.lra = lra;
 	}
 
 	static FfmpegStats parseStats(String stats) {
 		float lufs = Float.NaN;
+		float lra = Float.NaN;
 
 		Scanner scanner = new Scanner(stats);
 		while (scanner.hasNextLine()) {
@@ -27,9 +31,21 @@ public class FfmpegStats {
 				if (!trimmed.isEmpty())
 					lufs = Float.parseFloat(trimmed);
 			}
+			
+			if (line.startsWith(LRA_ID)) {
+				int prefixTrimLength = LRA_ID.length();
+				int suffixTrimLength = " LU".length();
+
+				String stripped = line.substring(prefixTrimLength,
+						line.length() - suffixTrimLength);
+
+				String trimmed = stripped.trim();
+				if (!trimmed.isEmpty())
+					lra = Float.parseFloat(trimmed);
+			}
 		}
 		scanner.close();
 
-		return new FfmpegStats(lufs);
+		return new FfmpegStats(lufs, lra);
 	}
 }
