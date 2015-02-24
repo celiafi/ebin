@@ -18,9 +18,13 @@ public class Stats {
 	}
 
 	public float getLufs() {
-		return this.ffmpegStats.lufs;
+		return this.ffmpegStats.getLufs();
 	}
-	
+
+	public float getLra() {
+		return this.ffmpegStats.getLra();
+	}
+
 	public String getPath() {
 		return this.path;
 	}

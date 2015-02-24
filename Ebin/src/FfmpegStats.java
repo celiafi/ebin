@@ -1,15 +1,26 @@
 import java.util.Scanner;
 
 public class FfmpegStats {
-	float lufs;
-	float lra;
+	private float lufs;
+	private float lra;
 
+	/**
+	 * FFMPEG output parsing constants
+	 */
 	private final static String LUFS_ID = "    I:";
 	private final static String LRA_ID =  "    LRA:";
 
 	FfmpegStats(float lufs, float lra) {
 		this.lufs = lufs;
 		this.lra = lra;
+	}
+	
+	float getLufs(){
+		return this.lufs;
+	}
+	
+	float getLra(){
+		return this.lra;
 	}
 
 	static FfmpegStats parseStats(String stats) {
