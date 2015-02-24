@@ -79,7 +79,7 @@ public class Ebin {
 		comAr[2] = "-i";
 		comAr[3] = filepath;
 		comAr[4] = "-filter_complex";
-		comAr[5] = "ebur128";
+		comAr[5] = "ebur128=peak=true";
 		comAr[6] = "-f";
 		comAr[7] = "null";
 		comAr[8] = "-";

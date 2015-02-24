@@ -24,6 +24,10 @@ public class Stats {
 	public float getLra() {
 		return this.ffmpegStats.getLra();
 	}
+	
+	public float getTpk() {
+		return this.ffmpegStats.getTpk();
+	}
 
 	public String getPath() {
 		return this.path;
