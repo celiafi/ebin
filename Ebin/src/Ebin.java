@@ -17,8 +17,6 @@ public class Ebin {
 	private static final float LUFS_MAX = -13.0f;
 
 	private static ArrayList<Stats> invalidStats = new ArrayList<Stats>();
-	
-	public static final String NEWLINE = System.lineSeparator();
 
 	private static String executeExternalCommand(String[] commandArray)
 			throws IOException {
@@ -46,7 +44,7 @@ public class Ebin {
 
 		int exitValue = process.exitValue();
 		sb.append("Process exited with value: " + exitValue);
-		sb.append(NEWLINE);
+		sb.append(Constants.NEWLINE);
 
 		return sb.toString();
 	}
@@ -56,7 +54,7 @@ public class Ebin {
 		String nextLine = null;
 		while ((nextLine = bReader.readLine()) != null) {
 			sb.append(nextLine);
-			sb.append(NEWLINE);
+			sb.append(Constants.NEWLINE);
 		}
 		return sb.toString();
 	}
@@ -143,32 +141,32 @@ public class Ebin {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("Audio analysis report for directory " + directory);
-		sb.append(NEWLINE);
+		sb.append(Constants.NEWLINE);
 
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
 				.format(Calendar.getInstance().getTime());
 		sb.append("Analyzed at " + timeStamp);
-		sb.append(NEWLINE);
-		sb.append(NEWLINE);
+		sb.append(Constants.NEWLINE);
+		sb.append(Constants.NEWLINE);
 
 		for (File file : files) {
 			if (matchExtension(file, ".mp3") || matchExtension(file, ".wav")) {
 				try {
 					Stats stats = analyzeFile(file.getAbsolutePath());
 
-					String analysis = parseStats(stats);
+					String analysis = ReportFormatter.formatStats(stats);
 
 					sb.append(analysis);
-					sb.append(NEWLINE);
-					sb.append(NEWLINE);
-					
+					sb.append(Constants.NEWLINE);
+					sb.append(Constants.NEWLINE);
+
 					System.out.println(analysis);
 
 					if (!checkStatsForValidity(stats)) {
-						System.out.println("INVALID" + NEWLINE);
+						System.out.println("INVALID" + Constants.NEWLINE);
 						invalidStats.add(stats);
 					} else
-						System.out.println("VALID" + NEWLINE);
+						System.out.println("VALID" + Constants.NEWLINE);
 
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -191,12 +189,13 @@ public class Ebin {
 
 	private static String appendInvalidStats() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(NEWLINE + "INVALID FILES:" + NEWLINE + NEWLINE);
+		sb.append(Constants.NEWLINE + "INVALID FILES:" + Constants.NEWLINE
+				+ Constants.NEWLINE);
 
 		for (Stats stats : invalidStats) {
-			sb.append(parseStats(stats));
-			sb.append(NEWLINE);
-			sb.append(NEWLINE);
+			sb.append(ReportFormatter.formatStats(stats));
+			sb.append(Constants.NEWLINE);
+			sb.append(Constants.NEWLINE);
 		}
 
 		return sb.toString();
@@ -215,21 +214,6 @@ public class Ebin {
 			return false;
 
 		return true;
-	}
-
-	private static String parseStats(Stats stats) {
-
-		StringBuilder sb = new StringBuilder();
-		sb.append("file:\t");
-		sb.append(stats.getPath());
-		sb.append(NEWLINE + "pk dB:\t");
-		sb.append(stats.getPeak());
-		sb.append(NEWLINE + "snr dB:\t");
-		sb.append(stats.getSnr());
-		sb.append(NEWLINE + "lufs:\t");
-		sb.append(stats.getLufs());
-
-		return sb.toString();
 	}
 
 	private static void showUsage() {
