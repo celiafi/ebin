@@ -14,6 +14,7 @@ public class ReportFormatter {
 		sb.append(stats.getSnr());
 		sb.append(Constants.NEWLINE + "lufs:\t");
 		sb.append(stats.getLufs());
+		sb.append(Constants.NEWLINE);
 
 		return sb.toString();
 	}
