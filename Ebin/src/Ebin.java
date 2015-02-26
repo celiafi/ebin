@@ -128,6 +128,17 @@ public class Ebin {
 		return fileExtension.equals(extension);
 	}
 
+	public static ArrayList<File> listAllFiles(File dir) {
+		ArrayList<File> files = new ArrayList<File>();
+		for (File file : dir.listFiles()) {
+			if (file.isFile())
+				files.add(file);
+			else if (file.isDirectory())
+				files.addAll(listAllFiles(file));
+		}
+		return files;
+	}
+
 	public static void main(String[] args) {
 
 		if (args.length != 2) {
@@ -138,6 +149,7 @@ public class Ebin {
 		File directory = new File(args[0]);
 		File report = new File(args[1]);
 		File[] files = directory.listFiles();
+		ArrayList<File> allFiles = listAllFiles(directory);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("Audio analysis report for directory " + directory);
@@ -149,7 +161,7 @@ public class Ebin {
 		sb.append(Constants.NEWLINE);
 		sb.append(Constants.NEWLINE);
 
-		for (File file : files) {
+		for (File file : allFiles) {
 			if (matchExtension(file, ".mp3") || matchExtension(file, ".wav")) {
 				try {
 					Stats stats = analyzeFile(file.getAbsolutePath());
