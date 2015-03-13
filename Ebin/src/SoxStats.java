@@ -53,8 +53,7 @@ public class SoxStats {
 				String stripped = line.substring(trimLength);
 				String trimmed = stripped.trim();
 				String token = getFirstToken(trimmed);
-				if (!token.isEmpty())
-					peakLevel = Float.parseFloat(token);
+				peakLevel = Utils.parseFloat(token);
 			}
 
 			if (line.startsWith(RMS_PEAK_ID)) {
@@ -62,8 +61,7 @@ public class SoxStats {
 				String stripped = line.substring(trimLength);
 				String trimmed = stripped.trim();
 				String token = getFirstToken(trimmed);
-				if (!token.isEmpty())
-					rmsPk = Float.parseFloat(token);
+				rmsPk = Utils.parseFloat(token);
 			}
 
 			if (line.startsWith(RMS_TROUGH_ID)) {
@@ -72,8 +70,7 @@ public class SoxStats {
 				String trimmed = stripped.trim();
 				String token = getFirstToken(trimmed);
 				token = getToken(line, 4);
-				if (!token.isEmpty())
-					rmsTr = Float.parseFloat(token);
+				rmsTr = Utils.parseFloat(token);
 			}
 		}
 		scanner.close();
