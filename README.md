@@ -15,6 +15,14 @@ Download `ebin.jar` (from `dist` folder) and obtain the required dependencies. R
 
 There are no configuration options.
 
+## Known bugs
+
+No known bugs.
+
+## Building and hacking
+
+Standard Java build. Parsing constants should *not* be changed. If tolerances for acceptance change, static variables in Ebin.java have to be changed to reflect new values.
+
 ## License
 
     This program is free software: you can redistribute it and/or modify
