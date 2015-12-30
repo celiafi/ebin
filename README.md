@@ -5,9 +5,13 @@ E-Book Investigator for DTBook validation and analysis
 
 ebin is an audio analysis tool tailored specifically for analysis of DTBooks. ebin analyses batches of files for their digital peak level, true peak (ISP) level, signal-to-noise ratio and LUFS.
 
+## Dependencies
+
+ebin uses [ffmpeg](https://www.ffmpeg.org/) and [sox](http://sox.sourceforge.net/), so grab those. ebin by default looks for sox.exe and ffmpeg.exe in the directory ebin itself resides, so move / copy them there. Furthermore, depending on the input files, ebin may require that sox has `libmad.dll` (which it should by default).
+
 ## Installation and usage
 
-Download `ebin.jar` (from `dist` folder) and required dependencies `ffmpeg.exe`, `libmad.dll` and `sox.exe`. Run ebin from CLI with `java -jar ebin.jar dir report`, where `dir` is the directory containing audio files to be analysed and `report` is the report location.
+Download `ebin.jar` (from `dist` folder) and obtain the required dependencies. Run ebin from CLI with `java -jar ebin.jar dir report`, where `dir` is the directory containing audio files to be analysed and `report` is the report location.
 
 There are no configuration options.
 
